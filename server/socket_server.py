@@ -17,11 +17,11 @@ class TCPSerer:
         self.is_shutdown = False  # 服务器状态，默认停机
 
     # 服务器启动函数
-    def server_forever(self):
+    def serve_forever(self):
         self.server_socket.bind(self.server_address)  # 绑定端口号
         self.server_socket.listen(10)  # 设置最大连接数，超出排队
         # while True:
-        while self.is_shutdown is not False:
+        while not self.is_shutdown:
             # 1. 接受请求
             request, client_class = self.get_request()
             # 2. 处理请求
@@ -44,8 +44,8 @@ class TCPSerer:
 
     # 关闭连接
     def close_request(self, request=None):
+        request.shutdown(socket.SHUT_WR)
         request.close()
-        request.shutdown()
 
     # 关闭服务器
     def shutdown(self):

@@ -59,5 +59,5 @@ class StreamRequestHandler(BaseRequestHandler):
 
     # 关闭文件描述符
     def close(self):
-        self.request.readfile.close()
-        self.request.writefile.close()
+        self.readfile.close()
+        self.writefile.close()
