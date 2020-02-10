@@ -39,7 +39,7 @@ class TCPSerer:
 
     # 处理请求
     def process_request(self, request=None, client_class=None):
-        handler = self.HandlerClass(request, client_class)  # 处理请求类
+        handler = self.HandlerClass(self, request, client_class)  # 处理请求类
         handler.handle()
 
     # 关闭连接
