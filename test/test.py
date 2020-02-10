@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __date__ = '2020/2/9 17:27'
 
-
+import time
 import socket
 import threading
 
@@ -19,9 +19,9 @@ class TestBaseRequestHandler(StreamRequestHandler):
     # 具体处理：：打印并发送回去
     def handle(self):
         msg = self.read_line()
-        print('server  handle' )
         print('Server receive msg: ' + msg)
         self.write_content(msg)
+        time.sleep(1)  # 单个客户端处理时间为1s
         self.send()
 
 
@@ -37,12 +37,8 @@ class SocketServerTest:
     def client_connect(self):
         client_socket = socket.socket()
         client_socket.connect((IP, PORT))
-        print('        client_socket.connect((IP, PORT))')
         client_socket.send(b'Hello TcpServer\r\n')
-        print('client_socket.send')
         msg = client_socket.recv(1024)
-        print('        msg = client_socket.recv(1024)')
-
         print('Client receive msg : ' + msg.decode())
 
     # 模拟生成客户端

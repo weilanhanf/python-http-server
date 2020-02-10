@@ -45,6 +45,11 @@ class StreamRequestHandler(BaseRequestHandler):
     # 读取一行消息
     def read_line(self, length=65536):  # 浏览器能够处理的请求的大小默认值length
         msg = self.readfile.readline(length).strip()
+        # self.readfile.readline(length)
+        # try:
+        #     print(self.readfile.readline(length))
+        # except Exception as e:
+        #     print(e)
         return self.decode(msg)
 
     # 写消息

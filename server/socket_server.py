@@ -3,6 +3,7 @@ __date__ = '2020/2/9 12:00'
 # https://docs.python.org/zh-cn/3/library/socket.html
 
 
+import threading
 import socket
 
 
@@ -26,12 +27,13 @@ class TCPSerer:
             request, client_class = self.get_request()
             # 2. 处理请求
             try:  # 捕获处理数据中出现的异常，避免服务器宕机
-                self.process_request(request, client_class)
+                # self.process_request(request, client_class)
+                self.process_request_multi_thread(request, client_class)  # 多线程处理请求
             except Exception as e:
                 print(e)  # 控制台打印查看错误
-            finally:
-                # 3. 关闭连接
-                self.close_request(request)
+            # finally:  # 多线程可能请求还未处理完成就关闭连接，所以连接关闭放置在处理请求处理之后
+            #     # 3. 关闭连接
+            #     self.close_request(request)
 
     # 接收请求
     def get_request(self):
@@ -41,6 +43,13 @@ class TCPSerer:
     def process_request(self, request=None, client_class=None):
         handler = self.HandlerClass(self, request, client_class)  # 处理请求类
         handler.handle()
+        # 3. 关闭连接
+        self.close_request(request)
+
+    # 多线程处理请求
+    def process_request_multi_thread(self, request=None, client_class=None):
+        new_thread = threading.Thread(target=self.process_request, args=(request, client_class))
+        new_thread.start()
 
     # 关闭连接
     def close_request(self, request=None):
