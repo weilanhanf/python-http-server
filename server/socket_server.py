@@ -7,7 +7,7 @@ import threading
 import socket
 
 
-class TCPSerer:
+class TCPServer:
     """ 接受客户端的TCP连接 """
 
     def __init__(self, server_address=None, handler_class=None):

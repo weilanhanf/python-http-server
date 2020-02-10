@@ -54,7 +54,7 @@ class StreamRequestHandler(BaseRequestHandler):
 
     # 写消息
     def write_content(self, msg):
-        msg = self.encode(msg)
+        msg = self.encode(msg)  # 编码成字节流
         self.buff.append(msg)  # 数据写回缓冲区
 
     def send(self):

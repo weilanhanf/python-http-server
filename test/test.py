@@ -5,8 +5,10 @@ import time
 import socket
 import threading
 
-from server.socket_server import TCPSerer
+from server.socket_server import TCPServer
 from handler.base_handler import StreamRequestHandler
+from server.base_http_server import BaseHTTPServer
+from handler.base_http_handler import BaseHTTPRequestHandler
 
 
 IP = '127.0.0.1'
@@ -30,7 +32,7 @@ class SocketServerTest:
 
     # 开启服务器
     def run_server(self):
-        tcp_server = TCPSerer((IP, PORT), TestBaseRequestHandler)  # 创建tcp服务器对象
+        tcp_server = TCPServer((IP, PORT), TestBaseRequestHandler)  # 创建tcp服务器对象
         tcp_server.serve_forever()  # 启动
 
     # 具体的客户端连接逻辑：连接之后发送并并接受打印
@@ -64,6 +66,16 @@ class SocketServerTest:
             client.join()
 
 
+class BaseHTTPRequestHandlerTest:
+    """ HTTP请求处理器测试类 """
+
+    def run_server(self):
+        BaseHTTPServer((IP, 9999), BaseHTTPRequestHandler).serve_forever()
+
+    def run(self):
+        self.run_server()
+
+
 if __name__ == '__main__':
-    socket_server_test = SocketServerTest()
-    socket_server_test.run()
+    # SocketServerTest().run()
+    BaseHTTPRequestHandlerTest().run()
