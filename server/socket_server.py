@@ -10,7 +10,7 @@ class TCPSerer:
     """ 接受客户端的TCP连接 """
 
     def __init__(self, server_address=None, handler_class=None):
-        self.server_address = server_address  # 服务端地址
+        self.server_address = server_address  # 服务端地址端口
         self.HandlerClass = handler_class  # 网络请求处理器类
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 套接字
         # AF_INET表示一个地址族(ip, 端口号)  SOCK_STREAM表示接收字节流
@@ -18,7 +18,7 @@ class TCPSerer:
 
     # 服务器启动函数
     def serve_forever(self):
-        self.server_socket.bind(self.server_address)  # 绑定端口号
+        self.server_socket.bind(self.server_address)  # 绑定地址端口号
         self.server_socket.listen(10)  # 设置最大连接数，超出排队
         # while True:
         while not self.is_shutdown:

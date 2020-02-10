@@ -11,7 +11,8 @@ class BaseRequestHandler:
         self.client_address = client_address
 
     def handle(self):
-        raise Exception("This method need be overridden")
+        # raise Exception("This method need be overridden")
+        pass
 
 
 class StreamRequestHandler(BaseRequestHandler):
@@ -19,7 +20,7 @@ class StreamRequestHandler(BaseRequestHandler):
 
     def __init__(self, server_socket=None, request=None, client_address=None):
         super().__init__(server_socket, request, client_address)
-        self.buff = []
+        self.buff = []  # 设置缓冲区
         # 把连接请求分离为读和写文件描述符
         self.readfile = self.request.makefile("rb")
         self.writefile = self.request.makefile("wb")
@@ -43,16 +44,16 @@ class StreamRequestHandler(BaseRequestHandler):
 
     # 读取一行消息
     def read_line(self, length=65536):  # 浏览器能够处理的请求的大小默认值length
-        msg = self.readfile.read(length).strip()
+        msg = self.readfile.readline(length).strip()
         return self.decode(msg)
 
     # 写消息
     def write_content(self, msg):
         msg = self.encode(msg)
-        self.buff.append(msg)
+        self.buff.append(msg)  # 数据写回缓冲区
 
     def send(self):
-        for line in self.buff:
+        for line in self.buff:  # 读取缓冲区
             self.writefile.write(line)
         self.writefile.flush()  # 所有缓存数据强发送到目的地
         self.buff = []  # 缓存区清空
