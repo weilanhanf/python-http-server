@@ -45,6 +45,14 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         except Exception as e:
             logging.exception(e)
 
+    # get方法实现
+    def do_GET(self):
+        msg = '<h1>Hello World</h1>'
+        self.write_response(200, 'Success')
+        self.write_headers('Content-Length', len(msg))
+        self.end_headers()
+        self.write_content(msg)
+
     # 解析请求头
     def parse_headers(self):
         headers = {}
@@ -78,7 +86,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
     # 写入应答行：版本，状态码，状态解释等
     def write_response(self, code, msg):
         # 状态行
-        response_line = '%s %d %s' % (self.default_http_version, code, msg)
+        response_line = '%s %d %s\r\n' % (self.default_http_version, code, msg)
         self.write_content(response_line)
         # 应答头
         # TODO
@@ -87,7 +95,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
 
     # 写入HTTP
     def write_headers(self, key, value):
-        msg = '%s: %s' % (key, value)
+        msg = '%s: %s\r\n' % (key, value)
         self.write_content(msg)
 
     # 写入错误HTTP请求的结果，完整封装错误报文
