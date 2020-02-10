@@ -5,11 +5,12 @@ __date__ = '2020/2/10 15:51'
 import logging
 
 
+from util import date_time_string
 from handler.base_handler import StreamRequestHandler
 
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+                    format='%(asctime)s - %(filename)s [line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
 class BaseHTTPRequestHandler(StreamRequestHandler):
@@ -24,6 +25,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         self.version = None
         self.method = None
         self.body = None
+        self.request_line = None
 
     # 处理请求
     def handle(self):
@@ -70,9 +72,10 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
     def parse_request(self):
         # 解析请求行
         first_line = self.read_line()
+        self.request_line = first_line  # 请求行赋值第一行属性，方便日志打印
         words = first_line.split()  # 把请求行按空格拆分
+        # print(words)
         self.method, self.path, self.version = words  # 获取请求方法，路径，版本
-
         # 解析请求头
         self.headers = self.parse_headers()
 
@@ -84,14 +87,16 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         return True  # 解析请求成功
 
     # 写入应答行：版本，状态码，状态解释等
-    def write_response(self, code, msg):
-        # 状态行
+    def write_response(self, code, msg=None):
+        logging.info('%s code: %s.' % (self.request_line, code))  # 控制台日志打印
+        if msg is None:  # 设置状态信息
+            msg = self.responses[code][0]
+        # 写入状态行
         response_line = '%s %d %s\r\n' % (self.default_http_version, code, msg)
         self.write_content(response_line)
-        # 应答头
-        # TODO
-        self.write_headers('Server', '')
-        self.write_headers('Date', '')
+        # 写入服务器类型，日期响应头
+        self.write_headers('Server', '%s: %s' % (self.server_socket.server_name, self.server_socket.version))
+        self.write_headers('Date', date_time_string())
 
     # 写入HTTP
     def write_headers(self, key, value):

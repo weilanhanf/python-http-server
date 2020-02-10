@@ -9,4 +9,6 @@ class BaseHTTPServer(TCPServer):
 
     def __init__(self, server_address=None, handler_class=None):
         super().__init__(server_address, handler_class)
+        self.server_name = 'BaseHTTPServer'
+        self.version = 'version0.1'
 
