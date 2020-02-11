@@ -36,7 +36,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
             # 方法执行get,post
             method_name = 'do_' + self.method
             # 自省检查方法是否存在
-            if not hasattr(self, method_name):
+            if not hasattr(self, method_name):  # 如果请求方法不存在则返回404状态
                 self.write_error(404, None)
                 self.send()
                 return
@@ -55,7 +55,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         self.end_headers()
         self.write_content(msg)
 
-    # 解析请求头
+    # 解析请求头，并返回请求头字典
     def parse_headers(self):
         headers = {}
         while True:
@@ -74,10 +74,9 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         first_line = self.read_line()
         self.request_line = first_line  # 请求行赋值第一行属性，方便日志打印
         words = first_line.split()  # 把请求行按空格拆分
-        # print(words)
         self.method, self.path, self.version = words  # 获取请求方法，路径，版本
-        # 解析请求头
-        self.headers = self.parse_headers()
+        # print(self.method, self.path, self.version)
+        self.headers = self.parse_headers()  # 解析请求头
 
         # 解析请求内容
         key = 'Content-Length'

@@ -12,7 +12,7 @@ from handler.base_http_handler import BaseHTTPRequestHandler
 
 
 IP = '127.0.0.1'
-PORT = 8888
+PORT = 8800
 
 
 class TestBaseRequestHandler(StreamRequestHandler):
