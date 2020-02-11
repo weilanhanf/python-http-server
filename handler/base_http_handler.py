@@ -40,10 +40,12 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
                 self.write_error(404, None)
                 self.send()
                 return
-            method = getattr(self, method_name)
+            method = getattr(self, method_name)  # 反射获取方法属性
             method()  # 对应答报文的封装
+            # print('execute', method_name)
             # 消息发送结束
             self.send()
+            # print(self.method, 'send success')
         except Exception as e:
             logging.exception(e)
 
@@ -73,6 +75,9 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
         # 解析请求行
         first_line = self.read_line()
         self.request_line = first_line  # 请求行赋值第一行属性，方便日志打印
+        # print('self.request_line', self.request_line)
+        if not self.request_line:
+            return
         words = first_line.split()  # 把请求行按空格拆分
         self.method, self.path, self.version = words  # 获取请求方法，路径，版本
         # print(self.method, self.path, self.version)
@@ -87,7 +92,7 @@ class BaseHTTPRequestHandler(StreamRequestHandler):
 
     # 写入应答行：版本，状态码，状态解释等
     def write_response(self, code, msg=None):
-        logging.info('%s code: %s.' % (self.request_line, code))  # 控制台日志打印
+        logging.info('%s code:%s' % (self.request_line, code))  # 控制台日志打印
         if msg is None:  # 设置状态信息
             msg = self.responses[code][0]
         # 写入状态行

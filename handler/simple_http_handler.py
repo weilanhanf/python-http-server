@@ -2,6 +2,7 @@
 __date__ = '2020/2/11 11:09'
 
 
+import json
 import os
 from urllib import parse
 
@@ -52,7 +53,30 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                         break
                     else:
                         self.write_content(buf)
+
     # 实现post方法：验证账号密码
     def do_POST(self):
-        pass
+        # 从请求取出数据
+        print(self.body)
+        body = json.loads(self.body)
+        username, password = body['username'], body['password']
+
+        # 数据校验
+        if username == 'root' and password == 'root':
+            message, code = 'success', '1'
+        else:
+            message, code = 'fail', '0'
+        response = {
+            'message': message,
+            'code': code,
+        }
+        response = json.dumps(response)
+        # 封装应答消息
+        self.write_response(200)
+        self.write_headers('Content-Length', len(response))
+        # 解决跨域问题
+        self.write_headers('Access-Control-Allow-Origin', 'http://%s:%d' %
+                          (self.server_socket.server_address[0], self.server_socket.server_address[1]))
+        self.end_headers()
+        self.write_content(response)
 
